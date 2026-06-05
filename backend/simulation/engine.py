@@ -174,7 +174,7 @@ class SimulationEngine:
             if self.status in ["running", "paused"]:
                 # Trigger reroute due to environmental temperature changes
                 self.trigger_dynamic_reroute(f"Zone '{zone_id}' temperature changed to {new_temp}°C")
-                return True
+            return True
         return False
 
     def get_state_payload(self) -> dict:

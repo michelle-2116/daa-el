@@ -87,7 +87,7 @@ async def start_simulation():
     Starts the simulation loop.
     """
     await sim_engine.start()
-    return {"status": "started", "state": sim_engine.get_state_payload()}
+    return sim_engine.get_state_payload()
 
 @app.post("/api/simulation/pause")
 async def pause_simulation():
@@ -95,7 +95,7 @@ async def pause_simulation():
     Pauses the simulation loop.
     """
     await sim_engine.pause()
-    return {"status": "paused", "state": sim_engine.get_state_payload()}
+    return sim_engine.get_state_payload()
 
 @app.post("/api/simulation/resume")
 async def resume_simulation():
@@ -103,7 +103,7 @@ async def resume_simulation():
     Resumes the simulation loop.
     """
     await sim_engine.resume()
-    return {"status": "resumed", "state": sim_engine.get_state_payload()}
+    return sim_engine.get_state_payload()
 
 @app.post("/api/simulation/reset")
 async def reset_simulation():
@@ -111,7 +111,7 @@ async def reset_simulation():
     Resets the simulation state.
     """
     await sim_engine.reset()
-    return {"status": "reset", "state": sim_engine.get_state_payload()}
+    return sim_engine.get_state_payload()
 
 @app.post("/api/simulation/cooling")
 async def toggle_cooling(req: CoolingRequest):
