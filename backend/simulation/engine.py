@@ -11,7 +11,7 @@ class SimulationEngine:
     def __init__(self):
         # Simulation settings
         self.status = "idle"  # idle, running, paused, finished
-        self.speed_multiplier = 1.0  # 1x, 2x, 5x, 10x
+        self.speed_multiplier = 1.0  # 1x to 100x
         
         # Coordinates and route
         self.start_city = "Srinagar"
@@ -295,22 +295,30 @@ class SimulationEngine:
             
         self.sim_elapsed_seconds += 1
         
-        # 1. Update position along current edge
-        if self.current_edge_idx < len(self.route_coords) - 1:
+        # We run the physical movement and thermal integration in sub-steps of at most 1 second each.
+        # This keeps the math stable and correct at high speed multipliers (e.g. 1x to 100x).
+        sub_steps = max(1, int(self.speed_multiplier))
+        dt = self.speed_multiplier / sub_steps
+        
+        # Base speed of truck in km per second
+        base_speed_kms = self.truck_speed_kmh / 3600.0
+        distance_to_travel = base_speed_kms * self.speed_multiplier
+        
+        # 1. Update position along current route (consuming distance_to_travel)
+        while distance_to_travel > 0 and self.current_edge_idx < len(self.route_coords) - 1:
             p1 = self.route_coords[self.current_edge_idx]
             p2 = self.route_coords[self.current_edge_idx + 1]
-            
             segment_distance = haversine_distance(p1, p2)
             
-            # Truck travels at 80 km/h.
-            # Speed in km per real-world second = (80 / 3600) * speed_multiplier
-            distance_traveled = (self.truck_speed_kmh / 3600.0) * self.speed_multiplier
-            
-            if segment_distance > 0:
-                self.interpolation_progress += distance_traveled / segment_distance
+            if segment_distance <= 0:
+                self.current_edge_idx += 1
+                self.interpolation_progress = 0.0
+                continue
                 
-            # If we reached the end of this edge segment
-            if self.interpolation_progress >= 1.0:
+            remaining_segment_distance = segment_distance * (1.0 - self.interpolation_progress)
+            
+            if distance_to_travel >= remaining_segment_distance:
+                distance_to_travel -= remaining_segment_distance
                 self.current_edge_idx += 1
                 self.interpolation_progress = 0.0
                 
@@ -330,31 +338,29 @@ class SimulationEngine:
                     self.current_lat = self.route_coords[self.current_edge_idx][0]
                     self.current_lon = self.route_coords[self.current_edge_idx][1]
             else:
-                # Interpolate position
+                self.interpolation_progress += distance_to_travel / segment_distance
+                distance_to_travel = 0.0
                 self.current_lat = p1[0] + (p2[0] - p1[0]) * self.interpolation_progress
                 self.current_lon = p1[1] + (p2[1] - p1[1]) * self.interpolation_progress
                 
         # 2. Update Temperatures (Vaccine Thermal Physics)
-        # Determine outside temp based on truck position
-        _, zone_name, ext_temp = get_zone_at_coordinate(self.current_lat, self.current_lon, self.zones_temperatures)
-        self.external_temp = ext_temp
-        
-        # Thermals parameters
+        # We integrate the thermal model in sub-steps of size dt to prevent numerical instability.
         k_heat = 0.012  # heat leakage from outside
         k_cool = 0.08   # refrigeration cooling rate
         T_target = 3.5  # target temperature of active cooling
         
-        # Calculate new temp
-        temp_delta = k_heat * (self.external_temp - self.internal_temp)
-        
-        if self.cooling_active:
-            # Active cooling pulls temperature towards T_target
-            temp_delta -= k_cool * (self.internal_temp - T_target)
+        for _ in range(sub_steps):
+            # Determine outside temp based on current truck position
+            _, zone_name, ext_temp = get_zone_at_coordinate(self.current_lat, self.current_lon, self.zones_temperatures)
+            self.external_temp = ext_temp
             
-        self.internal_temp += temp_delta
-        
+            temp_delta = k_heat * (self.external_temp - self.internal_temp)
+            if self.cooling_active:
+                temp_delta -= k_cool * (self.internal_temp - T_target)
+                
+            self.internal_temp += temp_delta * dt
+            
         # 3. Anomaly detection via PELT
-        # We record the history point before checking anomaly to keep index alignments
         is_anomaly_step = False
         
         anomaly_res = detect_anomaly_pelt(self.raw_temps + [self.internal_temp], self.temp_threshold)
@@ -372,23 +378,20 @@ class SimulationEngine:
             # If anomaly is critical or warning, trigger dynamic rerouting!
             self.trigger_dynamic_reroute(f"Vaccine thermal anomaly: {anomaly_res['type']} ({anomaly_res['severity']})")
         elif not anomaly_res["detected"] and self.active_anomaly:
-            # Anomaly cleared (e.g. cooled down below threshold and stabilized)
+            # Anomaly cleared
             self.log_event("Vaccine temperature stabilized. Anomaly cleared.")
             self.active_anomaly = None
             
         self.record_temp_history(is_anomaly=is_anomaly_step, is_reroute=False)
         
         # 4. Check if route risk has changed significantly while traveling
-        # (e.g. if we are on a road that has become extremely hot)
-        # Let's say if current segment risk increases, reroute is triggered
         if self.current_edge_idx < len(self.route_coords) - 1:
             p1 = self.route_coords[self.current_edge_idx]
             p2 = self.route_coords[self.current_edge_idx + 1]
             current_seg_risk = compute_edge_risk(p1, p2, self.zones_temperatures)
-            # If the segment we are on becomes extremely dangerous (risk > 3.5), trigger reroute!
             if current_seg_risk > 3.8 and self.route_type == "original":
                 self.trigger_dynamic_reroute(f"Upcoming route risk too high ({current_seg_risk:.2f})")
-        
+                
         # 5. Broadcast new state
         await self.broadcast_state()
 
