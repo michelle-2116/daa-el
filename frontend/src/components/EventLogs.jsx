@@ -18,7 +18,7 @@ export default function EventLogs({ logs }) {
           <Terminal className="w-4 h-4 text-brand-neonBlue" />
           <h2 className="font-bold text-xs uppercase tracking-wider text-brand-neonBlue font-sans">Operational Audit Log</h2>
         </div>
-        <span className="w-2 h-2 rounded-full bg-brand-success animate-ping"></span>
+        <span className="w-2 h-2 rounded-full bg-brand-success"></span>
       </div>
 
       <div
@@ -28,28 +28,28 @@ export default function EventLogs({ logs }) {
         {logs && logs.length > 0 ? (
           logs.map((log, index) => {
             // Apply contextual coloring to logs to enhance readability
-            let textColor = "text-gray-400";
+            let textColor = "text-slate-600";
             
             if (log.toLowerCase().includes("anomaly") || log.toLowerCase().includes("failed")) {
               textColor = "text-brand-danger font-semibold";
             } else if (log.toLowerCase().includes("rerouting") || log.toLowerCase().includes("new safer route")) {
-              textColor = "text-purple-400 font-semibold";
+              textColor = "text-purple-700 font-semibold";
             } else if (log.toLowerCase().includes("started") || log.toLowerCase().includes("delivered") || log.toLowerCase().includes("stabilized")) {
               textColor = "text-brand-success font-semibold";
             } else if (log.toLowerCase().includes("arrived") || log.toLowerCase().includes("entered")) {
-              textColor = "text-brand-warning";
+              textColor = "text-brand-warning font-semibold";
             } else if (log.toLowerCase().includes("initialized") || log.toLowerCase().includes("configuration")) {
-              textColor = "text-brand-neonBlue";
+              textColor = "text-brand-neonBlue font-semibold";
             }
 
             return (
-              <div key={index} className={`${textColor} break-words transition-all duration-200 hover:bg-white/5 px-1 rounded`}>
+              <div key={index} className={`${textColor} break-words transition-all duration-200 hover:bg-slate-50 px-1 rounded`}>
                 {log}
               </div>
             );
           })
         ) : (
-          <div className="text-gray-500 italic h-full flex items-center justify-center font-sans">
+          <div className="text-slate-400 italic h-full flex items-center justify-center font-sans">
             Terminal idle. Generate route to initialize system log.
           </div>
         )}

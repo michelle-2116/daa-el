@@ -6,20 +6,13 @@ A premium logistics intelligence dashboard simulating vaccine transportation acr
 
 ## Installation & Setup
 
-### Prerequisites
-*   Anaconda / Miniconda (with `daa` environment installed)
-*   Node.js (v16+)
-
 ### 1. Backend Setup
-1.  Open your terminal and activate the conda environment:
-    ```bash
-    conda activate daa
     ```
-2.  Install python dependencies (if not already installed):
+1.  Install python dependencies (if not already installed):
     ```bash
     pip install -r backend/requirements.txt
     ```
-3.  Launch the FastAPI server:
+2.  Launch the FastAPI server:
     ```bash
     uvicorn backend.main:app --reload
     ```

@@ -148,22 +148,22 @@ export default function App() {
   // Loading and Error States
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-brand-darkBg text-white">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-brand-darkBg text-brand-neonBlue">
         <RefreshCw className="w-10 h-10 text-brand-neonBlue animate-spin mb-4" />
-        <h1 className="text-lg font-bold tracking-wider">Loading ColdChain AI Control Panel...</h1>
+        <h1 className="text-lg font-bold tracking-wider text-slate-800">Loading ColdChain AI Control Panel...</h1>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-brand-darkBg text-white px-6 text-center">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-brand-darkBg text-slate-900 px-6 text-center">
         <ShieldAlert className="w-12 h-12 text-brand-danger mb-4" />
-        <h1 className="text-xl font-bold mb-2">Connection Failure</h1>
-        <p className="text-gray-400 text-sm max-w-md mb-6">{error}</p>
+        <h1 className="text-xl font-bold mb-2 text-slate-800">Connection Failure</h1>
+        <p className="text-slate-500 text-sm max-w-md mb-6">{error}</p>
         <button
           onClick={fetchConfig}
-          className="flex items-center space-x-2 bg-[#1F2937] hover:bg-gray-700 border border-brand-glassBorder px-4 py-2 rounded-lg font-bold transition-all"
+          className="flex items-center space-x-2 bg-white hover:bg-slate-50 border border-brand-glassBorder px-4 py-2 rounded-lg font-bold text-slate-700 shadow-sm transition-all"
         >
           <RefreshCw className="w-4 h-4" />
           <span>Retry Connection</span>
@@ -176,13 +176,13 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-brand-darkBg pb-4">
       
       {/* HEADER BAR */}
-      <header className="glass-card mx-4 mt-4 px-6 py-3.5 rounded-xl border border-brand-glassBorder flex items-center justify-between shadow-lg">
+      <header className="glass-card mx-4 mt-4 px-6 py-3.5 rounded-lg border border-brand-glassBorder flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-glowBlue">
-            <Snowflake className="w-6 h-6 text-brand-darkBg" />
+          <div className="w-10 h-10 rounded-lg bg-brand-neonBlue flex items-center justify-center shadow-sm">
+            <Snowflake className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-cyan-400 uppercase">
+            <h1 className="text-lg font-bold tracking-tight text-slate-900 uppercase">
               ColdChain AI
             </h1>
             <p className="text-[10px] text-brand-neonBlue font-semibold uppercase tracking-widest leading-none">
@@ -194,7 +194,7 @@ export default function App() {
         <div className="flex items-center space-x-6 text-xs">
           <div className="flex items-center space-x-2">
             <Radio className={`w-4 h-4 ${wsConnected ? "text-brand-success animate-pulse" : "text-brand-danger"}`} />
-            <span className="text-gray-400">WebSocket:</span>
+            <span className="text-slate-500">WebSocket:</span>
             <span className={`font-bold uppercase ${wsConnected ? "text-brand-success" : "text-brand-danger"}`}>
               {wsConnected ? "Online" : "Connecting..."}
             </span>
@@ -202,7 +202,7 @@ export default function App() {
 
           <div className="flex items-center space-x-2 border-l border-brand-glassBorder pl-6">
             <Cpu className="w-4 h-4 text-brand-warning" />
-            <span className="text-gray-400">Optimization:</span>
+            <span className="text-slate-500">Optimization:</span>
             <span className="font-bold text-brand-warning uppercase">Dijkstra + PELT</span>
           </div>
         </div>

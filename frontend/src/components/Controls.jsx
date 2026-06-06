@@ -38,7 +38,7 @@ export default function Controls({
   };
 
   return (
-    <div className="space-y-6 flex flex-col h-full select-none text-gray-200">
+    <div className="space-y-6 flex flex-col h-full select-none text-slate-700">
       
       {/* 1. Route Planning Card */}
       <div className="glass-card p-4 rounded-xl border border-brand-glassBorder shadow-md">
@@ -49,12 +49,12 @@ export default function Controls({
         
         <form onSubmit={handleRouteSubmit} className="space-y-3">
           <div>
-            <label className="block text-xs text-gray-400 font-medium mb-1">Source City</label>
+            <label className="block text-xs text-slate-500 font-medium mb-1">Source City</label>
             <select
               value={startCity}
               onChange={(e) => setStartCity(e.target.value)}
               disabled={status === "running" || status === "paused"}
-              className="w-full bg-[#111928] text-white border border-brand-glassBorder text-sm rounded-lg p-2 outline-none focus:border-brand-neonBlue disabled:opacity-50"
+              className="w-full bg-white text-slate-900 border border-brand-glassBorder text-sm rounded-lg p-2 outline-none focus:border-brand-neonBlue disabled:opacity-50"
             >
               {cities.map((city) => (
                 <option key={`start-${city.name}`} value={city.name}>
@@ -65,12 +65,12 @@ export default function Controls({
           </div>
 
           <div>
-            <label className="block text-xs text-gray-400 font-medium mb-1">Destination City</label>
+            <label className="block text-xs text-slate-500 font-medium mb-1">Destination City</label>
             <select
               value={endCity}
               onChange={(e) => setEndCity(e.target.value)}
               disabled={status === "running" || status === "paused"}
-              className="w-full bg-[#111928] text-white border border-brand-glassBorder text-sm rounded-lg p-2 outline-none focus:border-brand-neonBlue disabled:opacity-50"
+              className="w-full bg-white text-slate-900 border border-brand-glassBorder text-sm rounded-lg p-2 outline-none focus:border-brand-neonBlue disabled:opacity-50"
             >
               {cities.map((city) => (
                 <option key={`end-${city.name}`} value={city.name}>
@@ -82,7 +82,7 @@ export default function Controls({
 
           <div className="grid grid-cols-2 gap-2 mt-2">
             <div>
-              <label className="block text-xs text-gray-400 font-medium mb-0.5">Alpha (Dist Weight)</label>
+              <label className="block text-xs text-slate-500 font-medium mb-0.5">Alpha (Dist Weight)</label>
               <input
                 type="number"
                 min="0.1"
@@ -90,11 +90,11 @@ export default function Controls({
                 step="0.1"
                 value={alpha}
                 onChange={(e) => handleWeightChange(parseFloat(e.target.value), beta)}
-                className="w-full bg-[#111928] text-white border border-brand-glassBorder text-sm rounded-lg p-2 outline-none focus:border-brand-neonBlue"
+                className="w-full bg-white text-slate-900 border border-brand-glassBorder text-sm rounded-lg p-2 outline-none focus:border-brand-neonBlue"
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-400 font-medium mb-0.5">Beta (Risk Weight)</label>
+              <label className="block text-xs text-slate-500 font-medium mb-0.5">Beta (Risk Weight)</label>
               <input
                 type="number"
                 min="0"
@@ -102,7 +102,7 @@ export default function Controls({
                 step="10"
                 value={beta}
                 onChange={(e) => handleWeightChange(alpha, parseFloat(e.target.value))}
-                className="w-full bg-[#111928] text-white border border-brand-glassBorder text-sm rounded-lg p-2 outline-none focus:border-brand-neonBlue"
+                className="w-full bg-white text-slate-900 border border-brand-glassBorder text-sm rounded-lg p-2 outline-none focus:border-brand-neonBlue"
               />
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function Controls({
           <button
             type="submit"
             disabled={status === "running" || status === "paused"}
-            className="w-full mt-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-brand-darkBg font-bold py-2 px-4 rounded-lg shadow-lg hover:shadow-cyan-500/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
+            className="w-full mt-2 bg-brand-neonBlue hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg shadow-sm active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
           >
             Generate Route
           </button>
@@ -130,32 +130,32 @@ export default function Controls({
             <button
               onClick={onStartSimulation}
               disabled={!telemetry?.route_coords || telemetry.route_coords.length === 0}
-              className="flex-1 flex items-center justify-center space-x-1.5 bg-brand-success hover:bg-emerald-400 text-brand-darkBg font-bold py-2 rounded-lg transition-all disabled:opacity-50 active:scale-95"
+              className="flex-1 flex items-center justify-center space-x-1.5 bg-brand-success hover:bg-emerald-600 text-white font-bold py-2 rounded-lg transition-all disabled:opacity-50 active:scale-95"
             >
-              <Play className="w-4 h-4 fill-brand-darkBg" />
+              <Play className="w-4 h-4 fill-white" />
               <span>Start</span>
             </button>
           ) : status === "running" ? (
             <button
               onClick={onPauseSimulation}
-              className="flex-1 flex items-center justify-center space-x-1.5 bg-brand-warning hover:bg-amber-400 text-brand-darkBg font-bold py-2 rounded-lg transition-all active:scale-95"
+              className="flex-1 flex items-center justify-center space-x-1.5 bg-brand-warning hover:bg-amber-600 text-white font-bold py-2 rounded-lg transition-all active:scale-95"
             >
-              <Pause className="w-4 h-4 fill-brand-darkBg" />
+              <Pause className="w-4 h-4 fill-white" />
               <span>Pause</span>
             </button>
           ) : (
             <button
               onClick={onResumeSimulation}
-              className="flex-1 flex items-center justify-center space-x-1.5 bg-brand-success hover:bg-emerald-400 text-brand-darkBg font-bold py-2 rounded-lg transition-all active:scale-95"
+              className="flex-1 flex items-center justify-center space-x-1.5 bg-brand-success hover:bg-emerald-600 text-white font-bold py-2 rounded-lg transition-all active:scale-95"
             >
-              <Play className="w-4 h-4 fill-brand-darkBg" />
+              <Play className="w-4 h-4 fill-white" />
               <span>Resume</span>
             </button>
           )}
 
           <button
             onClick={onResetSimulation}
-            className="flex-1 flex items-center justify-center space-x-1.5 bg-[#1F2937] hover:bg-gray-700 border border-brand-glassBorder text-white font-bold py-2 rounded-lg transition-all active:scale-95"
+            className="flex-1 flex items-center justify-center space-x-1.5 bg-white hover:bg-slate-50 border border-brand-glassBorder text-slate-700 font-bold py-2 rounded-lg shadow-sm transition-all active:scale-95"
           >
             <RotateCcw className="w-4 h-4" />
             <span>Reset</span>
@@ -167,7 +167,7 @@ export default function Controls({
           {/* Speed Slider */}
           <div>
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-gray-400">Simulation Speed</span>
+              <span className="text-slate-500">Simulation Speed</span>
               <span className="text-brand-neonBlue font-semibold">{telemetry?.speed_multiplier || 1}x</span>
             </div>
             <input
@@ -177,14 +177,14 @@ export default function Controls({
               step="1"
               value={telemetry?.speed_multiplier || 1}
               onChange={(e) => onUpdateSpeed(parseInt(e.target.value))}
-              className="w-full accent-brand-neonBlue bg-[#111928] h-1.5 rounded-lg appearance-none cursor-pointer"
+              className="w-full accent-brand-neonBlue bg-slate-200 h-1.5 rounded-lg appearance-none cursor-pointer"
             />
           </div>
 
           {/* Threshold Slider */}
           <div>
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-gray-400">Safety Threshold</span>
+              <span className="text-slate-500">Safety Threshold</span>
               <span className="text-brand-danger font-semibold">{telemetry?.temp_threshold || 8.0}°C</span>
             </div>
             <input
@@ -194,15 +194,15 @@ export default function Controls({
               step="0.5"
               value={telemetry?.temp_threshold || 8.0}
               onChange={(e) => onUpdateThreshold(parseFloat(e.target.value))}
-              className="w-full accent-brand-danger bg-[#111928] h-1.5 rounded-lg appearance-none cursor-pointer"
+              className="w-full accent-brand-danger bg-slate-200 h-1.5 rounded-lg appearance-none cursor-pointer"
             />
           </div>
 
           {/* Manual Temp Override */}
           <div>
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-gray-400">Vaccine Internal Temp</span>
-              <span className="text-purple-400 font-semibold">{telemetry?.internal_temp?.toFixed(1) || 4.0}°C</span>
+              <span className="text-slate-500">Vaccine Internal Temp</span>
+              <span className="text-purple-600 font-semibold">{telemetry?.internal_temp?.toFixed(1) || 4.0}°C</span>
             </div>
             <input
               type="range"
@@ -211,7 +211,7 @@ export default function Controls({
               step="0.2"
               value={telemetry?.internal_temp || 4.0}
               onChange={(e) => onUpdateTempOverride(parseFloat(e.target.value))}
-              className="w-full accent-purple-500 bg-[#111928] h-1.5 rounded-lg appearance-none cursor-pointer"
+              className="w-full accent-purple-600 bg-slate-200 h-1.5 rounded-lg appearance-none cursor-pointer"
             />
           </div>
         </div>
@@ -221,7 +221,7 @@ export default function Controls({
           {coolingActive ? (
             <button
               onClick={() => onToggleCooling(false)}
-              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-bold py-2.5 px-4 rounded-lg shadow-glowRed transition-all active:scale-[0.98]"
+              className="w-full flex items-center justify-center space-x-2 bg-brand-danger hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-all active:scale-[0.98]"
             >
               <Flame className="w-4 h-4 fill-white" />
               <span>Trigger Cooling Failure</span>
@@ -229,7 +229,7 @@ export default function Controls({
           ) : (
             <button
               onClick={() => onToggleCooling(true)}
-              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 px-4 rounded-lg shadow-glowGreen transition-all active:scale-[0.98]"
+              className="w-full flex items-center justify-center space-x-2 bg-brand-success hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-all active:scale-[0.98]"
             >
               <Snowflake className="w-4 h-4 animate-spin" />
               <span>Repair & Restore Cooling</span>
@@ -249,17 +249,20 @@ export default function Controls({
           {zones.map((zone) => {
             const liveTemp = telemetry?.zones_temperatures?.[zone.id] ?? zone.default_temp;
             let barColor = "accent-brand-neonBlue"; // Cool
+            let textColor = "text-brand-neonBlue";
             if (liveTemp > 15.0 && liveTemp <= 32.0) {
               barColor = "accent-brand-warning"; // Moderate
+              textColor = "text-brand-warning";
             } else if (liveTemp > 32.0) {
               barColor = "accent-brand-danger"; // Danger
+              textColor = "text-brand-danger";
             }
 
             return (
               <div key={zone.id} className="space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span className="font-medium text-gray-300">{zone.name}</span>
-                  <span className={`font-semibold ${liveTemp > 32.0 ? "text-brand-danger" : liveTemp > 15.0 ? "text-brand-warning" : "text-brand-neonCyan"}`}>
+                  <span className="font-medium text-slate-700">{zone.name}</span>
+                  <span className={`font-semibold ${textColor}`}>
                     {liveTemp.toFixed(1)}°C
                   </span>
                 </div>
@@ -270,7 +273,7 @@ export default function Controls({
                   step="0.5"
                   value={liveTemp}
                   onChange={(e) => onUpdateZoneTemp(zone.id, parseFloat(e.target.value))}
-                  className={`w-full ${barColor} bg-[#111928] h-1.5 rounded-lg appearance-none cursor-pointer`}
+                  className={`w-full ${barColor} bg-slate-200 h-1.5 rounded-lg appearance-none cursor-pointer`}
                 />
               </div>
             );
