@@ -10,71 +10,70 @@
   }
 }
 
-/* Premium Light Mode Card & Control Styles */
-.glass-card {
+/* Flat Operations Panel & Control Styles */
+.glass-card, .ops-panel {
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  border-radius: 8px;
+  box-shadow: none !important;
+  border-radius: 4px;
 }
 
-.glass-card-hover:hover {
+.glass-card-hover:hover, .ops-panel-hover:hover {
   border-color: #CBD5E1;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
-.glass-input {
+.glass-input, .ops-input {
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
   color: #0F172A;
-  border-radius: 6px;
-  transition: all 0.15s ease-in-out;
+  border-radius: 4px;
+  font-family: inherit;
+  transition: all 0.1s ease-in-out;
 }
 
-.glass-input:focus {
+.glass-input:focus, .ops-input:focus {
   background: #FFFFFF;
-  border-color: #1E3A8A;
-  box-shadow: 0 0 0 1px #1E3A8A;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 1px #0284c7;
   outline: none;
 }
 
-.glass-btn {
+.glass-btn, .ops-btn {
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
   color: #0F172A;
-  border-radius: 6px;
-  transition: all 0.15s ease-in-out;
+  border-radius: 4px;
+  transition: all 0.1s ease-in-out;
 }
 
-.glass-btn:hover:not(:disabled) {
+.glass-btn:hover:not(:disabled), .ops-btn:hover:not(:disabled) {
   background: #F8FAFC;
   border-color: #CBD5E1;
 }
 
 /* Scrollbar styles for light theme panels */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.01);
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.08);
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
 }
 
 /* Custom flat status borders */
 .glow-border-blue {
-  border-color: #1E3A8A;
+  border-color: #0284c7;
   box-shadow: none;
 }
 
@@ -88,9 +87,9 @@
   box-shadow: none;
 }
 
-/* Solid status text styling (no glow) */
+/* Solid status text styling */
 .glow-text-blue {
-  color: #1E3A8A;
+  color: #0284c7;
   text-shadow: none;
 }
 
@@ -106,27 +105,29 @@
 
 /* Custom Leaflet Map adjustments to match premium control panel */
 .leaflet-container {
-  background: #0B0F19 !important; /* Keep map dark for clinical control center visual weight contrast */
+  background: #F8FAFC !important;
   border: 1px solid #E2E8F0;
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 .leaflet-tile {
-  filter: brightness(0.7) invert(1) contrast(2.5) hue-rotate(190deg) saturate(0.4) !important;
+  filter: grayscale(1) contrast(1.1) brightness(1.02) !important;
 }
 
 .leaflet-bar {
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  background-color: rgba(15, 23, 42, 0.8) !important;
-  backdrop-filter: blur(8px);
+  border: 1px solid #CBD5E1 !important;
+  background-color: #FFFFFF !important;
+  box-shadow: none !important;
+  border-radius: 4px !important;
 }
 
 .leaflet-bar a {
   background-color: transparent !important;
-  color: #fff !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #0F172A !important;
+  border-bottom: 1px solid #E2E8F0 !important;
 }
 
 .leaflet-bar a:hover {
-  background-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: #F1F5F9 !important;
+  color: #000000 !important;
 }

@@ -8,26 +8,29 @@ export default {
     extend: {
       colors: {
         brand: {
-          darkBg: "#F8FAFC", // Slate-50: clean medical-grade off-white background
-          glassBg: "#FFFFFF", // Pure white for card surfaces
-          glassBorder: "#E2E8F0", // Slate-200: subtle divider borders
-          glassHighlight: "#F1F5F9", // Slate-100: interactive hover background
-          neonBlue: "#1E3A8A", // Surgical Blue: primary branding and CTAs
-          neonPurple: "#4F46E5", // Indigo-600: secondary action/focus
-          neonCyan: "#0EA5E9", // Sky-500: telemetry secondary indicators
-          danger: "#EF4444", // Red-500: critical semantic errors
-          warning: "#F59E0B", // Amber-500: warning/alert
-          success: "#10B981" // Emerald-500: safe status
+          darkBg: "#F8FAFC", // Sterile off-white base background
+          panel: "#FFFFFF", // Flat panel base
+          border: "#E2E8F0", // Slate-200 subtle divider
+          accent: "#0284c7", // Restrained steel blue accent
+          muted: "#64748B", // Desaturated slate gray for labels
+          danger: "#EF4444", // Reserved for critical thermal errors
+          warning: "#F59E0B", // Reserved for warnings/alerts
+          success: "#10B981" // Reserved for stable/normal states
         }
       },
-      boxShadow: {
-        glass: "0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)", // Subtle micro drop shadow
-        glowBlue: "0 0 0 1px rgba(30, 58, 138, 0.1)", // Flat borders instead of glows
-        glowRed: "0 0 0 1px rgba(239, 68, 68, 0.1)",
-        glowGreen: "0 0 0 1px rgba(16, 185, 129, 0.1)"
+      borderRadius: {
+        'none': '0',
+        'sm': '2px',
+        'DEFAULT': '4px',
+        'md': '4px',
+        'lg': '4px',
       },
-      backdropBlur: {
-        glass: "12px"
+      boxShadow: {
+        flat: "none",
+        glass: "none",
+        glowBlue: "none",
+        glowRed: "none",
+        glowGreen: "none"
       }
     },
   },

@@ -3,9 +3,9 @@ import L from "leaflet";
 
 // Custom SVG Icons
 const normalTruckSvg = `
-  <div class="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-[#1E3A8A]">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-      <rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect>
+  <div class="flex items-center justify-center w-7 h-7 rounded bg-white border border-[#0284c7]">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+      <rect x="1" y="3" width="15" height="13" rx="1" ry="1"></rect>
       <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
       <circle cx="5.5" cy="18.5" r="2.5"></circle>
       <circle cx="18.5" cy="18.5" r="2.5"></circle>
@@ -14,9 +14,9 @@ const normalTruckSvg = `
 `;
 
 const warningTruckSvg = `
-  <div class="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-[#EF4444]">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-      <rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect>
+  <div class="flex items-center justify-center w-7 h-7 rounded bg-white border border-[#EF4444]">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+      <rect x="1" y="3" width="15" height="13" rx="1" ry="1"></rect>
       <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
       <circle cx="5.5" cy="18.5" r="2.5"></circle>
       <circle cx="18.5" cy="18.5" r="2.5"></circle>
@@ -25,7 +25,7 @@ const warningTruckSvg = `
 `;
 
 const rerouteIconSvg = `
-  <div class="w-3.5 h-3.5 rounded-full bg-[#EF4444] border-2 border-white"></div>
+  <div class="w-2.5 h-2.5 rounded bg-[#F59E0B] border border-white"></div>
 `;
 
 export default function MapView({ telemetry, config }) {
@@ -56,9 +56,9 @@ export default function MapView({ telemetry, config }) {
       maxZoom: 9
     });
 
-    // Dark styled OSM Tiles using CSS filters defined in index.css
+    // Grayscale styled OSM Tiles using CSS filters defined in index.css
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
     mapRef.current = map;
@@ -85,9 +85,9 @@ export default function MapView({ telemetry, config }) {
         const line = L.polyline(
           [[sourceCity.lat, sourceCity.lon], [targetCity.lat, targetCity.lon]],
           {
-            color: "rgba(255, 255, 255, 0.08)",
-            weight: 2,
-            dashArray: "4, 4"
+            color: "#CBD5E1",
+            weight: 1,
+            dashArray: "3, 3"
           }
         ).addTo(map);
         layers.edges.push(line);
@@ -97,17 +97,17 @@ export default function MapView({ telemetry, config }) {
     // Draw City Nodes
     config.cities.forEach(city => {
       const circle = L.circleMarker([city.lat, city.lon], {
-        radius: 4,
-        fillColor: "#111928",
-        color: "rgba(255, 255, 255, 0.4)",
-        weight: 1.5,
+        radius: 3,
+        fillColor: "#FFFFFF",
+        color: "#94A3B8",
+        weight: 1.2,
         fillOpacity: 1
       }).addTo(map);
       
       circle.bindTooltip(city.name, {
         permanent: false,
         direction: "top",
-        className: "bg-slate-900 text-slate-100 border border-slate-700 font-sans text-xs px-2 py-1 rounded shadow-sm"
+        className: "bg-white text-slate-800 border border-slate-200 font-mono text-[9px] px-1 rounded shadow-none"
       });
       
       layers.nodes.push(circle);
@@ -119,9 +119,9 @@ export default function MapView({ telemetry, config }) {
 
     config.zones.forEach(zone => {
       const poly = L.polygon(zone.polygon, {
-        fillOpacity: 0.15,
-        weight: 1.5,
-        dashArray: "3, 3"
+        fillOpacity: 0.08,
+        weight: 1,
+        dashArray: "2, 4"
       }).addTo(map);
 
       // Save references
@@ -145,7 +145,7 @@ export default function MapView({ telemetry, config }) {
         
         let color = "#10B981"; // Safe default
         if (liveTemp <= 15.0) {
-          color = "#3B82F6"; // Cool (Blue)
+          color = "#0284c7"; // Cool (Blue)
         } else if (liveTemp <= 32.0) {
           color = "#F59E0B"; // Moderate (Yellow/Amber)
         } else {
@@ -159,9 +159,9 @@ export default function MapView({ telemetry, config }) {
 
         // Dynamic label tooltip on polygon hover
         poly.unbindTooltip();
-        poly.bindTooltip(`${zone.name}: ${liveTemp.toFixed(1)}°C`, {
+        poly.bindTooltip(`${zone.name}: ${liveTemp.toFixed(1)}C`, {
           sticky: true,
-          className: "bg-slate-900 text-slate-100 border border-slate-700 font-sans text-xs px-2 py-1 rounded shadow-sm"
+          className: "bg-white text-slate-800 border border-slate-200 font-mono text-[9px] px-1 rounded shadow-none"
         });
       }
     });
@@ -171,21 +171,21 @@ export default function MapView({ telemetry, config }) {
     if (layers.originalRoute) map.removeLayer(layers.originalRoute);
     if (layers.currentRoute) map.removeLayer(layers.currentRoute);
     
-    // Draw Original Route (Red)
+    // Draw Original Route (Red dotted)
     if (telemetry.original_route_coords && telemetry.original_route_coords.length > 0) {
       layers.originalRoute = L.polyline(telemetry.original_route_coords, {
         color: "#EF4444",
-        weight: 3.5,
-        opacity: 0.65,
-        dashArray: "1, 8"
+        weight: 2,
+        opacity: 0.55,
+        dashArray: "2, 6"
       }).addTo(map);
     }
 
-    // Draw Current Active Route (Green/Emerald)
+    // Draw Current Active Route (Steel Blue)
     if (telemetry.route_coords && telemetry.route_coords.length > 0) {
       layers.currentRoute = L.polyline(telemetry.route_coords, {
-        color: "#10B981",
-        weight: 4.5,
+        color: "#0284c7",
+        weight: 3.5,
         opacity: 0.9,
         lineCap: "round",
         lineJoin: "round"
@@ -199,25 +199,22 @@ export default function MapView({ telemetry, config }) {
     const truckIcon = L.divIcon({
       html: isAnomaly ? warningTruckSvg : normalTruckSvg,
       className: "custom-truck-icon",
-      iconSize: [32, 32],
-      iconAnchor: [16, 16]
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
     });
 
     const truckPos = [telemetry.truck_position.lat, telemetry.truck_position.lon];
     layers.truckMarker = L.marker(truckPos, { icon: truckIcon }).addTo(map);
 
-    // Bind tooltip showing telemetry on truck marker
+    // Bind tooltip showing telemetry on truck marker (No emojis)
     layers.truckMarker.bindTooltip(
-      `🚚 Temp: ${telemetry.internal_temp.toFixed(1)}°C<br/>Zone: ${telemetry.current_zone_name}<br/>Speed: ${telemetry.truck_speed_kmh * telemetry.speed_multiplier} km/h`,
+      `Temp: ${telemetry.internal_temp.toFixed(1)}C<br/>Zone: ${telemetry.current_zone_name}<br/>Speed: ${(telemetry.truck_speed_kmh * telemetry.speed_multiplier).toFixed(0)} km/h`,
       {
         permanent: false,
         direction: "top",
-        className: "bg-slate-900 text-slate-100 border border-slate-700 font-sans text-xs px-2.5 py-1.5 rounded shadow-md"
+        className: "bg-white text-slate-800 border border-slate-200 font-mono text-[9px] px-2 py-1.5 rounded shadow-none"
       }
     );
-
-    // Pan map to truck if it moves and we want auto-center
-    // map.panTo(truckPos);
 
     // D. Draw Reroute Event Points
     layers.rerouteMarkers.forEach(m => map.removeLayer(m));
@@ -228,13 +225,13 @@ export default function MapView({ telemetry, config }) {
         const pingIcon = L.divIcon({
           html: rerouteIconSvg,
           className: "reroute-ping-icon",
-          iconSize: [16, 16],
-          iconAnchor: [8, 8]
+          iconSize: [10, 10],
+          iconAnchor: [5, 5]
         });
 
         const mark = L.marker(point, { icon: pingIcon }).addTo(map);
-        mark.bindTooltip(`Reroute Event #${i+1}<br/>Safe routing activated`, {
-          className: "bg-slate-900 text-red-200 border border-red-800 font-sans text-xs px-2 py-1 rounded shadow-sm"
+        mark.bindTooltip(`Reroute #${i+1}<br/>Risk limit exceeded`, {
+          className: "bg-white text-slate-800 border border-slate-200 font-mono text-[9px] px-1 rounded shadow-none"
         });
         layers.rerouteMarkers.push(mark);
       });
@@ -243,32 +240,32 @@ export default function MapView({ telemetry, config }) {
   }, [telemetry, config]);
 
   return (
-    <div className="w-full h-full relative border border-brand-glassBorder rounded-lg overflow-hidden bg-white flex flex-col">
-      <div ref={mapContainerRef} className="flex-1 w-full min-h-[480px]" />
+    <div className="w-full h-full relative flex flex-col min-h-0 min-w-0">
+      <div ref={mapContainerRef} className="flex-1 w-full min-h-0 min-w-0" />
       
       {/* Map Legends Overlay */}
-      <div className="absolute bottom-4 left-4 z-[1000] bg-white px-3 py-2 rounded border border-slate-200 text-[11px] space-y-1.5 pointer-events-none shadow-sm">
-        <div className="font-semibold text-slate-500 mb-1 uppercase tracking-wider text-[10px]">Temperature Risk Zones</div>
-        <div className="flex items-center space-x-2">
-          <span className="w-2.5 h-2.5 rounded-sm bg-[#3B82F6] opacity-80"></span>
-          <span className="text-slate-700">Cool (&le; 15&deg;C)</span>
+      <div className="absolute bottom-2 left-2 z-[1000] bg-white px-2 py-1.5 rounded border border-slate-200 text-[9px] font-mono space-y-1 pointer-events-none select-none">
+        <div className="font-bold text-slate-500 uppercase tracking-wider text-[8px] mb-0.5">Risk Zones</div>
+        <div className="flex items-center space-x-1.5">
+          <span className="w-2.5 h-1.5 rounded-sm bg-[#0284c7] opacity-80"></span>
+          <span className="text-slate-600">Cool (&le; 15C)</span>
         </div>
-        <div className="flex items-center space-x-2">
-          <span className="w-2.5 h-2.5 rounded-sm bg-[#F59E0B] opacity-80"></span>
-          <span className="text-slate-700">Moderate (15-32&deg;C)</span>
+        <div className="flex items-center space-x-1.5">
+          <span className="w-2.5 h-1.5 rounded-sm bg-[#F59E0B] opacity-80"></span>
+          <span className="text-slate-600">Moderate (15-32C)</span>
         </div>
-        <div className="flex items-center space-x-2">
-          <span className="w-2.5 h-2.5 rounded-sm bg-[#EF4444] opacity-80"></span>
-          <span className="text-slate-700">Dangerous (&gt; 32&deg;C)</span>
+        <div className="flex items-center space-x-1.5">
+          <span className="w-2.5 h-1.5 rounded-sm bg-[#EF4444] opacity-80"></span>
+          <span className="text-slate-600">Dangerous (&gt; 32C)</span>
         </div>
-        <hr className="border-slate-200 my-1" />
-        <div className="flex items-center space-x-2">
-          <span className="w-4 h-0.5 bg-[#10B981]"></span>
-          <span className="text-slate-700">Active Route</span>
+        <hr className="border-slate-100 my-0.5" />
+        <div className="flex items-center space-x-1.5">
+          <span className="w-3.5 h-0.5 bg-[#0284c7]"></span>
+          <span className="text-slate-600">Computed Path</span>
         </div>
-        <div className="flex items-center space-x-2">
-          <span className="w-4 h-0.5 border-t border-dashed border-[#EF4444]"></span>
-          <span className="text-slate-700">Original Route</span>
+        <div className="flex items-center space-x-1.5">
+          <span className="w-3.5 h-0.5 border-t border-dashed border-[#EF4444]"></span>
+          <span className="text-slate-600">Original Path</span>
         </div>
       </div>
     </div>

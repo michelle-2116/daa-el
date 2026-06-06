@@ -148,9 +148,9 @@ export default function App() {
   // Loading and Error States
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-brand-darkBg text-brand-neonBlue">
-        <RefreshCw className="w-10 h-10 text-brand-neonBlue animate-spin mb-4" />
-        <h1 className="text-lg font-bold tracking-wider text-slate-800">Loading ColdChain AI Control Panel...</h1>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-brand-darkBg text-brand-accent">
+        <RefreshCw className="w-6 h-6 animate-spin mb-3 text-brand-accent" />
+        <h1 className="text-xs font-mono tracking-widest text-slate-650 uppercase">Loading Vaccine Logistics Console...</h1>
       </div>
     );
   }
@@ -158,14 +158,14 @@ export default function App() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-brand-darkBg text-slate-900 px-6 text-center">
-        <ShieldAlert className="w-12 h-12 text-brand-danger mb-4" />
-        <h1 className="text-xl font-bold mb-2 text-slate-800">Connection Failure</h1>
-        <p className="text-slate-500 text-sm max-w-md mb-6">{error}</p>
+        <ShieldAlert className="w-10 h-10 text-brand-danger mb-3" />
+        <h1 className="text-sm font-bold tracking-tight mb-1 text-slate-800">Connection Failure</h1>
+        <p className="text-slate-500 text-xs max-w-sm mb-4">{error}</p>
         <button
           onClick={fetchConfig}
-          className="flex items-center space-x-2 bg-white hover:bg-slate-50 border border-brand-glassBorder px-4 py-2 rounded-lg font-bold text-slate-700 shadow-sm transition-all"
+          className="flex items-center space-x-1.5 bg-white hover:bg-slate-50 border border-brand-border px-3 py-1.5 rounded text-xs font-semibold text-slate-700 shadow-sm transition-all"
         >
-          <RefreshCw className="w-4 h-4" />
+          <RefreshCw className="w-3.5 h-3.5" />
           <span>Retry Connection</span>
         </button>
       </div>
@@ -173,46 +173,43 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-brand-darkBg pb-4">
+    <div className="h-screen flex flex-col bg-brand-darkBg overflow-hidden text-slate-700 text-xs antialiased">
       
       {/* HEADER BAR */}
-      <header className="glass-card mx-4 mt-4 px-6 py-3.5 rounded-lg border border-brand-glassBorder flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-lg bg-brand-neonBlue flex items-center justify-center shadow-sm">
-            <Snowflake className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold tracking-tight text-slate-900 uppercase">
-              ColdChain AI
-            </h1>
-            <p className="text-[10px] text-brand-neonBlue font-semibold uppercase tracking-widest leading-none">
-              Vaccine Logistics & Thermal Decision Support
-            </p>
-          </div>
+      <header className="h-9 px-3 bg-white border-b border-brand-border flex items-center justify-between shrink-0 select-none">
+        <div className="flex items-center space-x-2">
+          <div className="w-2 h-2 bg-brand-accent rounded-sm shrink-0" />
+          <span className="font-mono text-xs font-bold tracking-wider text-slate-900 uppercase">
+            VACCINE.LOGISTICS.CONTROL
+          </span>
+          <span className="text-[9px] font-mono text-slate-400 border border-slate-200 px-1 rounded-sm uppercase tracking-wider">
+            Live Transit
+          </span>
         </div>
 
-        <div className="flex items-center space-x-6 text-xs">
-          <div className="flex items-center space-x-2">
-            <Radio className={`w-4 h-4 ${wsConnected ? "text-brand-success animate-pulse" : "text-brand-danger"}`} />
-            <span className="text-slate-500">WebSocket:</span>
+        <div className="flex items-center space-x-4 font-mono text-[10px]">
+          <div className="flex items-center space-x-1.5">
+            <Radio className={`w-3.5 h-3.5 ${wsConnected ? "text-brand-success" : "text-brand-danger"}`} />
+            <span className="text-slate-400">WS:</span>
             <span className={`font-bold uppercase ${wsConnected ? "text-brand-success" : "text-brand-danger"}`}>
-              {wsConnected ? "Online" : "Connecting..."}
+              {wsConnected ? "Online" : "Offline"}
             </span>
           </div>
 
-          <div className="flex items-center space-x-2 border-l border-brand-glassBorder pl-6">
-            <Cpu className="w-4 h-4 text-brand-warning" />
-            <span className="text-slate-500">Optimization:</span>
-            <span className="font-bold text-brand-warning uppercase">Dijkstra + PELT</span>
+          <div className="h-3 w-px bg-brand-border" />
+
+          <div className="flex items-center space-x-1.5">
+            <span className="text-slate-400">ENGINE:</span>
+            <span className="font-bold text-slate-600">Dijkstra + PELT</span>
           </div>
         </div>
       </header>
 
       {/* DASHBOARD GRID WORKSPACE */}
-      <main className="flex-1 px-4 mt-4 grid grid-cols-12 gap-4">
+      <main className="flex-1 flex min-h-0 min-w-0 overflow-hidden">
         
-        {/* LEFT COLUMN - CONTROLS (3 cols) */}
-        <section className="col-span-12 lg:col-span-3 h-full">
+        {/* LEFT COLUMN - CONTROLS (280px wide) */}
+        <section className="w-[280px] shrink-0 border-r border-brand-border bg-white flex flex-col overflow-y-auto p-2.5 min-w-0">
           <Controls
             telemetry={telemetry}
             config={config}
@@ -230,25 +227,23 @@ export default function App() {
           />
         </section>
 
-        {/* CENTER COLUMN - MAP & GRAPH (6 cols) */}
-        <section className="col-span-12 lg:col-span-6 flex flex-col space-y-4">
-          <div className="flex-1 min-h-[480px]">
-            <MapView telemetry={telemetry} config={config} />
-          </div>
-          <div className="h-[220px]">
+        {/* CENTER COLUMN - MAP (large, uninterrupted) */}
+        <section className="flex-1 flex flex-col min-w-0 min-h-0 p-2 bg-brand-darkBg">
+          <MapView telemetry={telemetry} config={config} />
+        </section>
+
+        {/* RIGHT COLUMN - ANALYTICS, CHART & LOGS (340px wide) */}
+        <section className="w-[340px] shrink-0 border-l border-brand-border bg-white flex flex-col overflow-y-auto p-2.5 min-w-0 gap-3">
+          <Analytics telemetry={telemetry} />
+          
+          <div className="border-t border-brand-border pt-2.5">
             <TempChart
               history={telemetry?.temp_history || []}
               threshold={telemetry?.temp_threshold || 8.0}
             />
           </div>
-        </section>
 
-        {/* RIGHT COLUMN - ANALYTICS & LOGS (3 cols) */}
-        <section className="col-span-12 lg:col-span-3 flex flex-col space-y-4">
-          <div className="flex-1 overflow-y-auto">
-            <Analytics telemetry={telemetry} />
-          </div>
-          <div className="h-[200px]">
+          <div className="border-t border-brand-border pt-2.5 flex-1 flex flex-col min-h-[180px]">
             <EventLogs logs={telemetry?.event_logs || []} />
           </div>
         </section>

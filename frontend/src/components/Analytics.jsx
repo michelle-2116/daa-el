@@ -39,121 +39,121 @@ export default function Analytics({ telemetry }) {
 
   // Risk Rating logic
   const getRiskLabel = (risk) => {
-    if (risk <= 1.5) return { text: "Optimal", color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" };
-    if (risk <= 3.0) return { text: "Warning", color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200" };
-    return { text: "Critical", color: "text-rose-700", bg: "bg-rose-50", border: "border-rose-200" };
+    if (risk <= 1.5) return { text: "LOW", color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-250" };
+    if (risk <= 3.0) return { text: "MODERATE", color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-250" };
+    return { text: "CRITICAL", color: "text-rose-700", bg: "bg-rose-50", border: "border-rose-250" };
   };
 
   const activeRiskInfo = getRiskLabel(current_risk_score);
   const routeRiskInfo = getRiskLabel(avg_risk);
 
   return (
-    <div className="space-y-6 text-slate-700">
+    <div className="space-y-3.5 text-slate-700 text-xs">
 
       {/* 1. Telemetry Dashboard Grid */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 border border-brand-border bg-white select-none">
         {/* Lat/Lon */}
-        <div className="glass-card p-3 rounded-lg border border-brand-glassBorder flex items-center space-x-3">
-          <MapPin className="w-5 h-5 text-brand-neonBlue shrink-0" />
+        <div className="border-b border-r border-brand-border p-2 flex items-center space-x-2">
+          <MapPin className="w-3.5 h-3.5 text-brand-accent shrink-0" />
           <div>
-            <div className="text-[10px] text-slate-500 font-semibold uppercase">Coordinates</div>
+            <div className="text-[9px] text-slate-400 font-mono uppercase">Coordinates</div>
             <div className="text-xs font-mono font-bold text-slate-800 leading-tight">
-              {truck_position?.lat?.toFixed(4)}° N<br/>
-              {truck_position?.lon?.toFixed(4)}° E
+              {truck_position?.lat?.toFixed(4)} N<br/>
+              {truck_position?.lon?.toFixed(4)} E
             </div>
           </div>
         </div>
 
         {/* Route Type */}
-        <div className="glass-card p-3 rounded-lg border border-brand-glassBorder flex items-center space-x-3">
-          <GitCommit className="w-5 h-5 text-purple-600 shrink-0" />
+        <div className="border-b border-brand-border p-2 flex items-center space-x-2">
+          <GitCommit className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <div>
-            <div className="text-[10px] text-slate-500 font-semibold uppercase">Route Status</div>
-            <div className={`text-xs font-bold leading-tight uppercase ${route_type === "rerouted" ? "text-purple-700" : "text-slate-600"}`}>
-              {route_type === "rerouted" ? "Dynamic Rerouted" : "Standard Route"}
+            <div className="text-[9px] text-slate-400 font-mono uppercase">Route Status</div>
+            <div className={`text-xs font-mono font-bold leading-tight ${route_type === "rerouted" ? "text-amber-600" : "text-slate-600"}`}>
+              {route_type === "rerouted" ? "REROUTED" : "STANDARD"}
             </div>
           </div>
         </div>
 
         {/* Internal Temp */}
-        <div className={`glass-card p-3 rounded-lg border flex items-center space-x-3 transition-all ${isOverThreshold ? "border-brand-danger bg-rose-50" : "border-brand-glassBorder"}`}>
-          <Activity className={`w-5 h-5 shrink-0 ${isOverThreshold ? "text-brand-danger animate-pulse" : "text-brand-neonCyan"}`} />
+        <div className={`border-b border-r border-brand-border p-2 flex items-center space-x-2 transition-all ${isOverThreshold ? "bg-rose-50/50" : ""}`}>
+          <Activity className={`w-3.5 h-3.5 shrink-0 ${isOverThreshold ? "text-brand-danger animate-pulse" : "text-brand-accent"}`} />
           <div>
-            <div className="text-[10px] text-slate-500 font-semibold uppercase">Internal Temp</div>
-            <div className={`text-sm font-bold font-mono ${isOverThreshold ? "text-brand-danger font-black" : "text-slate-850"}`}>
-              {internal_temp.toFixed(2)}°C
+            <div className="text-[9px] text-slate-400 font-mono uppercase">Internal Temp</div>
+            <div className={`text-xs font-bold font-mono ${isOverThreshold ? "text-brand-danger font-black" : "text-slate-800"}`}>
+              {internal_temp.toFixed(2)}C
             </div>
           </div>
         </div>
 
         {/* External (Zone) Temp */}
-        <div className="glass-card p-3 rounded-lg border border-brand-glassBorder flex items-center space-x-3">
-          <Compass className="w-5 h-5 text-brand-warning shrink-0" />
+        <div className="border-b border-brand-border p-2 flex items-center space-x-2">
+          <Compass className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <div>
-            <div className="text-[10px] text-slate-500 font-semibold uppercase">Outside (Zone)</div>
-            <div className="text-xs font-bold truncate text-slate-800 leading-tight">
-              {external_temp.toFixed(1)}°C<br/>
-              <span className="text-[9px] text-slate-500">{current_zone_name}</span>
+            <div className="text-[9px] text-slate-400 font-mono uppercase">Ambient Temp</div>
+            <div className="text-xs font-bold text-slate-800 leading-tight">
+              <span className="font-mono">{external_temp.toFixed(1)}C</span>
+              <div className="text-[8px] text-slate-450 truncate max-w-[110px]" title={current_zone_name}>{current_zone_name}</div>
             </div>
           </div>
         </div>
 
         {/* Speed */}
-        <div className="glass-card p-3 rounded-lg border border-brand-glassBorder flex items-center space-x-3">
-          <Wind className="w-5 h-5 text-slate-500 shrink-0" />
+        <div className="border-r border-brand-border p-2 flex items-center space-x-2">
+          <Wind className="w-3.5 h-3.5 text-slate-450 shrink-0" />
           <div>
-            <div className="text-[10px] text-slate-500 font-semibold uppercase">Transit Speed</div>
-            <div className="text-sm font-bold text-slate-800">{currentSpeed.toFixed(0)} km/h</div>
+            <div className="text-[9px] text-slate-400 font-mono uppercase">Transit Speed</div>
+            <div className="text-xs font-mono font-bold text-slate-800">{currentSpeed.toFixed(0)} km/h</div>
           </div>
         </div>
 
         {/* ETA */}
-        <div className="glass-card p-3 rounded-lg border border-brand-glassBorder flex items-center space-x-3">
-          <Clock className="w-5 h-5 text-cyan-600 shrink-0" />
+        <div className="p-2 flex items-center space-x-2">
+          <Clock className="w-3.5 h-3.5 text-slate-450 shrink-0" />
           <div>
-            <div className="text-[10px] text-slate-500 font-semibold uppercase">ETA (Remaining)</div>
-            <div className="text-sm font-bold text-slate-800 font-mono">{formatETA(eta_seconds)}</div>
+            <div className="text-[9px] text-slate-400 font-mono uppercase">ETA</div>
+            <div className="text-xs font-bold text-slate-800 font-mono">{formatETA(eta_seconds)}</div>
           </div>
         </div>
       </div>
 
       {/* 2. Anomaly Alert Alertbox */}
       {active_anomaly ? (
-        <div className="border border-brand-danger bg-rose-50 text-rose-800 p-3.5 rounded-lg flex items-start space-x-3 animate-pulse">
-          <ShieldAlert className="w-6 h-6 text-brand-danger shrink-0 mt-0.5" />
-          <div>
-            <div className="text-xs font-black uppercase text-brand-danger tracking-wider">Vaccine Alert! ({active_anomaly.type})</div>
-            <div className="text-[11px] leading-relaxed mt-0.5">{active_anomaly.message}</div>
+        <div className="border border-brand-danger bg-rose-50/50 text-rose-800 p-2 flex items-start space-x-2 animate-pulse">
+          <ShieldAlert className="w-4 h-4 text-brand-danger shrink-0 mt-0.5" />
+          <div className="min-w-0 flex-1">
+            <div className="text-[9px] font-mono font-bold uppercase text-brand-danger tracking-wider">THERMAL ANOMALY: {active_anomaly.type.toUpperCase()}</div>
+            <div className="text-[10px] leading-snug mt-0.5 font-mono text-rose-700">{active_anomaly.message}</div>
           </div>
         </div>
       ) : (
-        <div className="border border-brand-success/30 bg-emerald-50 text-emerald-800 p-3 rounded-lg flex items-center space-x-3">
-          <ShieldCheck className="w-5 h-5 text-brand-success shrink-0" />
-          <div className="text-xs">
-            <span className="font-bold text-brand-success">Cold-chain Safe.</span> Thermal values stable inside safety threshold ({temp_threshold}°C).
+        <div className="border border-brand-success/30 bg-emerald-50/50 text-emerald-800 p-2 flex items-center space-x-2">
+          <ShieldCheck className="w-4 h-4 text-brand-success shrink-0" />
+          <div className="text-[10px] font-mono">
+            THERMAL STATE: NOMINAL (Limit: {temp_threshold.toFixed(1)}C)
           </div>
         </div>
       )}
 
       {/* 3. Risk Level Indicator */}
-      <div className="glass-card p-4 rounded-xl border border-brand-glassBorder shadow-md">
-        <div className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Zone & Route Risk Levels</div>
-        <div className="grid grid-cols-2 gap-3 text-center">
+      <div className="py-2.5 border-b border-brand-border select-none">
+        <div className="text-[9px] text-slate-400 font-mono uppercase tracking-wider mb-2">Zone & Route Risk Assessment</div>
+        <div className="grid grid-cols-2 gap-2 text-center">
           
-          <div className={`p-2 rounded-lg border ${activeRiskInfo.border} ${activeRiskInfo.bg}`}>
-            <div className="text-[10px] text-slate-500 font-medium">Zone Local Risk</div>
-            <div className={`text-base font-black ${activeRiskInfo.color}`}>
+          <div className={`p-1.5 border ${activeRiskInfo.border} ${activeRiskInfo.bg}`}>
+            <div className="text-[8px] text-slate-500 uppercase font-mono">Ambient Risk</div>
+            <div className={`text-xs font-mono font-bold ${activeRiskInfo.color}`}>
               {activeRiskInfo.text}
             </div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Factor: {current_risk_score.toFixed(1)}</div>
+            <div className="text-[8px] text-slate-400 font-mono mt-0.5">Factor: {current_risk_score.toFixed(1)}</div>
           </div>
 
-          <div className={`p-2 rounded-lg border ${routeRiskInfo.border} ${routeRiskInfo.bg}`}>
-            <div className="text-[10px] text-slate-500 font-medium">Average Route Risk</div>
-            <div className={`text-base font-black ${routeRiskInfo.color}`}>
+          <div className={`p-1.5 border ${routeRiskInfo.border} ${routeRiskInfo.bg}`}>
+            <div className="text-[8px] text-slate-500 uppercase font-mono">Mean Route Risk</div>
+            <div className={`text-xs font-mono font-bold ${routeRiskInfo.color}`}>
               {routeRiskInfo.text}
             </div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Score: {avg_risk.toFixed(1)}</div>
+            <div className="text-[8px] text-slate-400 font-mono mt-0.5">Index: {avg_risk.toFixed(1)}</div>
           </div>
 
         </div>
@@ -161,38 +161,38 @@ export default function Analytics({ telemetry }) {
 
       {/* 4. Route Comparison Panel */}
       {route_comparison && (
-        <div className="glass-card p-4 rounded-xl border border-brand-glassBorder shadow-md">
-          <div className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-3">Route Optimization Matrix</div>
-          <table className="w-full text-left text-xs border-collapse">
+        <div className="pt-2.5">
+          <div className="text-[9px] text-slate-400 font-mono uppercase tracking-wider mb-2">Path Analysis Matrix</div>
+          <table className="w-full text-left text-[10px] border-collapse font-mono">
             <thead>
-              <tr className="border-b border-brand-glassBorder text-slate-500 font-medium">
-                <th className="pb-1.5 font-semibold">Parameter</th>
-                <th className="pb-1.5 font-semibold text-right">Original Route</th>
-                <th className="pb-1.5 font-semibold text-right text-brand-success">Dynamic Route</th>
+              <tr className="border-b border-brand-border text-slate-400 font-medium">
+                <th className="pb-1 font-semibold uppercase text-[9px]">Metric</th>
+                <th className="pb-1 font-semibold text-right uppercase text-[9px]">Original</th>
+                <th className="pb-1 font-semibold text-right text-brand-accent uppercase text-[9px]">Computed</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-brand-glassBorder/40">
+            <tbody className="divide-y divide-slate-100">
               <tr>
-                <td className="py-2 text-slate-600">Distance (km)</td>
-                <td className="py-2 text-right text-slate-500 font-mono">{route_comparison.original.distance}</td>
-                <td className="py-2 text-right font-bold font-mono text-slate-800">{route_comparison.current.distance}</td>
+                <td className="py-1.5 text-slate-500 font-sans text-xs">Distance (km)</td>
+                <td className="py-1.5 text-right text-slate-500 font-bold">{route_comparison.original.distance}</td>
+                <td className="py-1.5 text-right font-bold text-slate-800">{route_comparison.current.distance}</td>
               </tr>
               <tr>
-                <td className="py-2 text-slate-600">Avg Risk Rating</td>
-                <td className="py-2 text-right text-slate-500 font-mono">{route_comparison.original.avg_risk}</td>
-                <td className="py-2 text-right font-bold font-mono text-slate-800">{route_comparison.current.avg_risk}</td>
+                <td className="py-1.5 text-slate-500 font-sans text-xs">Avg Risk Rating</td>
+                <td className="py-1.5 text-right text-slate-500 font-bold">{route_comparison.original.avg_risk}</td>
+                <td className="py-1.5 text-right font-bold text-slate-800">{route_comparison.current.avg_risk}</td>
               </tr>
-              <tr className="font-semibold text-sm">
-                <td className="py-2 text-slate-600">Route Cost</td>
-                <td className="py-2 text-right text-slate-500 font-mono">{route_comparison.original.cost}</td>
-                <td className="py-2 text-right font-black font-mono text-brand-neonBlue">{route_comparison.current.cost}</td>
+              <tr className="font-semibold text-xs border-t border-slate-200">
+                <td className="py-1.5 text-slate-600 font-sans">Path Penalty</td>
+                <td className="py-1.5 text-right text-slate-450">{route_comparison.original.cost}</td>
+                <td className="py-1.5 text-right font-black text-brand-accent">{route_comparison.current.cost}</td>
               </tr>
             </tbody>
           </table>
 
           {route_type === "rerouted" && (
-            <div className="mt-3 text-[10px] text-purple-600 leading-tight">
-              * Route updated dynamically. Dijkstra bypassed high-risk heat zones to protect vaccine potency.
+            <div className="mt-2 text-[9px] font-mono text-amber-600 leading-tight">
+              Transit path dynamic update: Ambient risk parameters exceeded.
             </div>
           )}
         </div>
