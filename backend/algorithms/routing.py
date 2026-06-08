@@ -17,27 +17,35 @@ def get_risk_from_temp(temp: float) -> float:
     else:
         return 2.5 + (temp - 30.0) * 0.25
 
-def compute_edge_risk(coord_a: tuple, coord_b: tuple, zones_temperatures: dict) -> float:
+def compute_edge_risk(
+    coord_a: tuple,
+    coord_b: tuple,
+    zones_temperatures: dict,
+    sample_interval_km: float = 20.0
+) -> float:
     """
     Samples points along the route segment to estimate the overall temperature risk.
-    We sample 3 points: start, midpoint, and end.
+    The number of samples scales dynamically with the segment's haversine distance,
+    sampling approximately once every `sample_interval_km` (default 20 km),
+    with a minimum of 3 samples (start, midpoint, end).
     """
     lat_a, lon_a = coord_a
     lat_b, lon_b = coord_b
     
-    # 3 sample points
-    samples = [
-        (lat_a, lon_a),
-        ((lat_a + lat_b) / 2.0, (lon_a + lon_b) / 2.0),
-        (lat_b, lon_b)
-    ]
+    # Dynamically determine number of samples based on segment distance
+    segment_dist = haversine_distance(coord_a, coord_b)
+    n_samples = max(3, int(segment_dist / sample_interval_km) + 1)
     
+    # Generate evenly-spaced sample points via linear interpolation
     total_risk = 0.0
-    for lat, lon in samples:
+    for i in range(n_samples):
+        t = i / (n_samples - 1)  # 0.0 to 1.0
+        lat = lat_a + (lat_b - lat_a) * t
+        lon = lon_a + (lon_b - lon_a) * t
         _, _, temp = get_zone_at_coordinate(lat, lon, zones_temperatures)
         total_risk += get_risk_from_temp(temp)
         
-    return total_risk / len(samples)
+    return total_risk / n_samples
 
 def build_nx_graph(zones_temperatures: dict, alpha: float, beta: float) -> nx.Graph:
     """

@@ -52,8 +52,10 @@ class SimulationEngine:
         self.event_logs = []
         self.reroute_points = []  # Coordinates where reroute was triggered
         self.active_anomaly = None  # None or dict detailing the anomaly
+        self.anomaly_clear_counter = 0
         self.start_time = None
         self.sim_elapsed_seconds = 0
+        self.last_reroute_time = -999
         
         # WebSockets
         self.connected_websockets = set()
@@ -73,9 +75,11 @@ class SimulationEngine:
         """
         self.status = "idle"
         self.sim_elapsed_seconds = 0
+        self.last_reroute_time = -999
         self.route_type = "original"
         self.reroute_points = []
         self.active_anomaly = None
+        self.anomaly_clear_counter = 0
         self.cooling_active = True
         self.internal_temp = 4.0
         self.temp_history = []
@@ -135,6 +139,7 @@ class SimulationEngine:
         """
         self.log_event(f"Dynamic rerouting activated! Reason: {reason}")
         self.reroute_points.append([self.current_lat, self.current_lon])
+        self.last_reroute_time = self.sim_elapsed_seconds
         
         current_coords = (self.current_lat, self.current_lon)
         # Calculate new route
@@ -305,6 +310,16 @@ class SimulationEngine:
         distance_to_travel = base_speed_kms * self.speed_multiplier
         
         # 1. Update position along current route (consuming distance_to_travel)
+        # Edge Case Fix: If we reroute extremely close to the destination, the path might only be 1 node long.
+        if len(self.route_coords) <= 1:
+            self.status = "finished"
+            self.current_lat = self.end_coords[0]
+            self.current_lon = self.end_coords[1]
+            self.log_event("Vaccine cargo successfully delivered to destination!")
+            self.record_temp_history(is_anomaly=False, is_reroute=False)
+            await self.broadcast_state()
+            return
+
         while distance_to_travel > 0 and self.current_edge_idx < len(self.route_coords) - 1:
             p1 = self.route_coords[self.current_edge_idx]
             p2 = self.route_coords[self.current_edge_idx + 1]
@@ -364,23 +379,41 @@ class SimulationEngine:
         is_anomaly_step = False
         
         anomaly_res = detect_anomaly_pelt(self.raw_temps + [self.internal_temp], self.temp_threshold)
-        if anomaly_res["detected"] and not self.active_anomaly:
-            # New anomaly detected!
-            self.active_anomaly = {
-                "type": anomaly_res["type"],
-                "severity": anomaly_res["severity"],
-                "message": anomaly_res["message"],
-                "index": len(self.raw_temps)
-            }
-            is_anomaly_step = True
-            self.log_event(anomaly_res["message"])
-            
-            # If anomaly is critical or warning, trigger dynamic rerouting!
-            self.trigger_dynamic_reroute(f"Vaccine thermal anomaly: {anomaly_res['type']} ({anomaly_res['severity']})")
-        elif not anomaly_res["detected"] and self.active_anomaly:
-            # Anomaly cleared
-            self.log_event("Vaccine temperature stabilized. Anomaly cleared.")
-            self.active_anomaly = None
+        
+        if anomaly_res["detected"]:
+            self.anomaly_clear_counter = 0  # Reset clear counter on any anomaly tick
+            if not self.active_anomaly:
+                # New anomaly detected!
+                self.active_anomaly = {
+                    "type": anomaly_res["type"],
+                    "severity": anomaly_res["severity"],
+                    "message": anomaly_res["message"],
+                    "index": len(self.raw_temps)
+                }
+                is_anomaly_step = True
+                self.log_event(anomaly_res["message"])
+                
+                if anomaly_res["severity"] == "Critical":
+                    # Critical: immediate reroute to avoid further thermal damage
+                    self.trigger_dynamic_reroute(
+                        f"Vaccine thermal anomaly: {anomaly_res['type']} ({anomaly_res['severity']})"
+                    )
+                else:
+                    # Warning: boost cooling system and issue dashboard alert (no reroute)
+                    if not self.cooling_active:
+                        self.cooling_active = True
+                        self.log_event("Cooling system auto-activated in response to Warning anomaly")
+                    self.log_event(
+                        f"[WARNING] Warning anomaly acknowledged - monitoring. "
+                        f"No reroute triggered for '{anomaly_res['type']}'"
+                    )
+        elif self.active_anomaly:
+            # Anomaly might be clearing, wait for 5 consecutive clean ticks
+            self.anomaly_clear_counter += 1
+            if self.anomaly_clear_counter >= 5:
+                self.log_event("Vaccine temperature stabilized. Anomaly cleared.")
+                self.active_anomaly = None
+                self.anomaly_clear_counter = 0
             
         self.record_temp_history(is_anomaly=is_anomaly_step, is_reroute=False)
         
@@ -389,7 +422,8 @@ class SimulationEngine:
             p1 = self.route_coords[self.current_edge_idx]
             p2 = self.route_coords[self.current_edge_idx + 1]
             current_seg_risk = compute_edge_risk(p1, p2, self.zones_temperatures)
-            if current_seg_risk > 3.8 and self.route_type == "original":
+            # Reroute if risk is high AND we haven't rerouted in the last 10 simulated seconds
+            if current_seg_risk > 3.8 and (self.sim_elapsed_seconds - self.last_reroute_time > 10):
                 self.trigger_dynamic_reroute(f"Upcoming route risk too high ({current_seg_risk:.2f})")
                 
         # 5. Broadcast new state
